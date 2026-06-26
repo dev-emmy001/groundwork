@@ -17,3 +17,10 @@ audit.json
 #cusor rules
 .cursorrules
 node_modules
+# Local SQLite (src/db/db.ts)
+local_database.db*
+# Runtime uploads (src/app/api/ingest/route.ts)
+uploads/
+# nextmodules
+.node_modules
+.next
