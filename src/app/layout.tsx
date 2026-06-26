@@ -24,11 +24,53 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-       className={`${GoogleSans.className} font-sans h-full antialiased`}
-    >
-      <body className="min-h-full tracking-tighter flex flex-col">{children}</body>
+    <html  className={GoogleSans.className} lang="en">
+      <head>
+        <meta name="viewport" content="width=1280" />
+      </head>
+      <body className="">
+        <div id="desktop-only" style={{
+          minWidth: '1024px',
+          height: '100vh',
+          overflow: 'hidden',
+        }}>
+          {children}
+        </div>
+        <div id="mobile-block" style={{
+          display: 'none',
+        }}>
+          <style>{`
+            @media (max-width: 1023px) {
+              #desktop-only { display: none !important; }
+              #mobile-block {
+                display: flex !important;
+                height: 100vh;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                gap: 16px;
+                padding: 32px;
+                text-align: center;
+                background: #F8F9FA;
+              }
+            }
+          `}</style>
+
+          <div style={{
+            fontSize: '16px', fontWeight: 600,
+            color: '#1C1F26',
+          }}>
+            Groundwork is desktop only
+          </div>
+          <div style={{
+            fontSize: '13px', color: '#5F6B7A',
+            maxWidth: '280px', lineHeight: 1.6,
+          }}>
+            Open this on a laptop or desktop for the full experience.
+          </div>
+        </div>
+      </body>
     </html>
   );
+
 }

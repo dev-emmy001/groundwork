@@ -19,28 +19,33 @@ export function onCooldownChange(cb: (cooling: boolean) => void) {
 
 async function getCPUTemp(): Promise<number | null> {
   try {
-    // for Windows: use WMIC
     if (process.platform === 'win32') {
       const { stdout } = await execAsync(
-        'wmic /namespace:\\\\root\\wmi PATH MSAcpi_ThermalZoneTemperature get CurrentTemperature'
+        `powershell -NoProfile -Command "` +
+        `Get-WmiObject MSAcpi_ThermalZoneTemperature -Namespace root/wmi | ` +
+        `Select-Object -ExpandProperty CurrentTemperature"`
       );
-      const lines = stdout.trim().split('\n').filter(l => l.trim() && !l.includes('Current'));
+
+      const lines = stdout
+        .trim()
+        .split('\n')
+        .map(l => l.trim())
+        .filter(l => l && !isNaN(Number(l)));
+
       if (lines.length === 0) return null;
 
-      // WMIC returns temp in tenths of Kelvin
-      const raw = parseInt(lines[0].trim(), 10);
-      const celsius = (raw / 10) - 273.15;
-      return Math.round(celsius);
+      // Take the highest reading across all thermal zones
+      const temps = lines.map(l => Math.round((parseInt(l, 10) / 10) - 273.15));
+      return Math.max(...temps);
     }
 
-    // for Linux/WSL: read from thermal zone
+    // Linux / WSL
     const { stdout } = await execAsync(
       'cat /sys/class/thermal/thermal_zone0/temp'
     );
     return Math.round(parseInt(stdout.trim(), 10) / 1000);
 
   } catch {
-    // If it can't read temp, return null and skip the check
     return null;
   }
 }
