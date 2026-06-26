@@ -51,14 +51,14 @@ async function check() {
   const temp = await getCPUTemp();
 
   if (temp === null) {
-    console.log('[Thermal] Could not read CPU temperature - skipping check');
+    console.log('[Thermal] Could not read CPU temperature, skipping check!');
     return;
   }
 
   console.log(`[Thermal] CPU temp: ${temp}°C`);
 
   if (temp >= TEMP_THRESHOLD_C) {
-    console.warn(`[Thermal] Threshold hit (${temp}°C) - pausing queue`);
+    console.warn(`[Thermal] Threshold hit (${temp}°C), pausing queue!`);
     isCoolingDown = true;
     stopPoller();
 
@@ -68,7 +68,7 @@ async function check() {
     setTimeout(() => {
       isCoolingDown = false;
       startPoller();
-      console.log('[Thermal] Cooldown complete - queue resumed');
+      console.log('[Thermal] Cooldown complete, queue resumed!');
       if (onCooldownCallback) onCooldownCallback(false);
     }, COOLDOWN_MS);
   }
@@ -85,7 +85,7 @@ export function stopThermalMonitor() {
     clearInterval(monitorTimer);
     monitorTimer = null;
   }
-  console.log('[Thermal] Monitor stopped');
+  console.log('[Thermal] Monitor stopped!');
 }
 
 export function isCooling(): boolean {
